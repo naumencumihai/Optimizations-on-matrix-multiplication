@@ -1,0 +1,27 @@
+======  Blas  ======
+Run=./tema2_blas: N=400: Time=0.039478
+Run=./tema2_blas: N=600: Time=0.128187
+Run=./tema2_blas: N=800: Time=0.282592
+Run=./tema2_blas: N=1000: Time=0.552228
+Run=./tema2_blas: N=1200: Time=0.923526
+Run=./tema2_blas: N=1400: Time=1.426886
+Run=./tema2_blas: N=1600: Time=2.156941
+
+======  Neopt ======
+Run=./tema2_neopt: N=400: Time=1.383919
+Run=./tema2_neopt: N=600: Time=4.718917
+Run=./tema2_neopt: N=800: Time=11.275108
+Run=./tema2_neopt: N=1000: Time=22.441584
+Run=./tema2_neopt: N=1200: Time=40.039314
+Run=./tema2_neopt: N=1400: Time=70.073479
+Run=./tema2_neopt: N=1600: Time=120.820763
+
+======   Opt  ======
+Run=./tema2_opt_m: N=400: Time=0.455071
+Run=./tema2_opt_m: N=600: Time=2.053911
+Run=./tema2_opt_m: N=800: Time=3.567695
+Run=./tema2_opt_m: N=1000: Time=9.765233
+Run=./tema2_opt_m: N=1200: Time=13.121116
+Run=./tema2_opt_m: N=1400: Time=22.345495
+Run=./tema2_opt_m: N=1600: Time=43.031063
+

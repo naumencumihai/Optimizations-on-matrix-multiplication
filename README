@@ -1,0 +1,100 @@
+
+------------------- Cerinta ---------------------
+
+Pentru urmatoarea operatie cu matrici:
+
+	C = B x A x At + Bt x B, unde
+
+	x    	-	inmultire de matrici ('cross product')
+	+    	- 	adunare de matrici
+	A si B 	-	matrice patratice de dimensiune N x N
+	A 	 	-	o matrice superior triunghiulara
+	'At' 	- 	transpusa matricei 'A'
+
+S-a cerut implementarea in 3 moduri diferite:
+	blas: 	o variantă care folosește una sau mai multe functii din BLAS Atlas
+			pentru realizarea operatiilor de inmultire si adunare.
+	neopt:	o variantă “de mână” fără îmbunătățiri.
+	opt_m:	o variantă îmbunătățită a versiunii neopt. Îmbunătățirea are în
+	vedere exclusiv modificarea codului pentru a obține performanțe mai bune.
+
+
+------------- Explicatii implementari -----------
+
+Implementare blas
+	Pentru varianta blas m-am folosit de 2 functii din blas atlas (cblas),
+	si anume: 'cblas_dtrmm' (calcul cu matrice triunghiulara) si 'cblas_dgemm' 
+	(calcul cu matrici - inmultire si adunare).
+	Am definit 3 matrici: 'BA' (reprezentand inmultirea dintre matricea B si
+	matricea A), 'BAAt' (inmultirea dintre matricea rezultata 'BA' si matricea
+	At) si 'C' (rezultatul final). Am folosit de 2 ori functia 'cblas_dtrmm',
+	prima data pentru inmultirea dintre matricile B si A, si a 2a data pentru
+	inmultirea dintre matricea rezultata si A transpus, dupa care, folosind
+	functia 'cblas_dgemm' am realizat operatia 'Bt x B + BAAt' (am inmultit 
+	matricele B transpus si B, la care am adunat matricea rezultata din primele
+	2 operatii - 'BAAt'), rezultatul acesteia fiind scris in matricea rezultat
+	'C'. Folosesc functia 'memcpy' pentru a scrie in matricea ce trebuie schimbata.
+	La final eliberez memoria pentru 'BA' si 'BAAt' si returnez matricea 'C'.
+
+Implementare neopt
+	Pentru varianta neoptimizata calculez inmultirile dintre matricele Bt si B,
+	A si At (tinand cont ca A e superior triunghiulara, k va incepe de la valoarea
+	max(i, j), nu de la 0), B si AAt (matricea rezultata din inmultirea A cu
+	At), trecand prin fiecare element al matricelor si executand operatia
+	caracteristica inmultirii matricelor (tinand cont de specificul celor 2 
+	matrici ce trebuiesc inmultite - pentru B transpus x B ma folosesc doar de 
+	elementele matricei B), dupa care adun cele 2 matrici si le scriu in matricea 
+	rezultat 'C'. Eliberez memoria alocata matricelor folosite si returnez 
+	matricea 'C'.
+
+Implementare optimizata
+	Pentru varianta optimizata aloc memorie doar pentru 3 matrici in loc de 4 
+	(matricea C va lua mai intai valoarea BAAt, dupa care adun la ea direct
+	matricea BtB) si folosesc registri pentru scaderea timpului de procesare, 
+	acestia vor fi pointeri la matrice si vor fi incrementati in bucla 
+	corespunzatoare acestora (tehnica prezentata in laboratorul 5).
+	Prin aceste simple optimizari timpul de procesare scade foarte mult 
+	(de ex. pentru N = 1200 timpul scade de la 40s la 13s).
+
+
+------- Analiza comparativa si concluzii --------
+
+In directorul 'memory' se gasesc 3 fisiere aferente ficarei implemetari care 
+contin outputul rularii valgrind cu optiunile –tool=memcheck –leak-check=full 
+avand ca input fisierul dat in schelet 'input_valgrind'. Fisierele rezultate
+sunt denumite 'blas.memory', 'neopt.memory' si 'opt_m.memory'.
+Se poate observa ca varianta blas foloseste mai multe alocari si, implicit
+mai multa memorie decat variantele 'de mana' ('81 allocs, 81 frees, 10,091,364 
+bytes allocated' - pentru blas vs. '9 allocs, 9 frees, 6,409,812 bytes 
+allocated').
+
+In directorul 'cache' se gasesc 3 fisiere aferente ficarei implemetari care 
+contin outputul rularii valgrind cu optiunile tool=cachegrind –branch-sim=yes 
+avand ca input fisierul dat in schelet 'input_valgrind'. Fisierele rezultate
+sunt denumite 'blas.cache', 'neopt.cache' si 'opt_m.cache'.
+Se observa ca, in cazul variantei optimizate, in comparatie cu cea neoptimizata, 
+datorita lucrului cu registri si pointeri atat I refs cat si D refs difera 
+semnificativ (I refs: 2,591,023,686 vs 6,904,583,456 - aproximativ de 2x mai 
+putine - si D refs: 684,022,163 vs 3,453,090,631 - aproximativ de 5x mai putine).
+Varianta blas oferind cea mai buna performanta cu I refs: 247,910,003 si D refs: 
+92,369,999. Cea mai considerabila diferenta dintre varianta blas si cele 'de mana'
+ o reprezinta, insa, branch-urile (4,422,389 in cazul implementarii blas vs 
+153,630,012, 164,136,701 in cazul implemetarilor neoptimizate respectiv, 
+optimizate).
+
+Performanta fiecarei implemetari, luand in considerare timpul de executie pe
+un test custom ('my_input') in cazul caruia N ia valori din 200 in 200 de la
+400 la 1600, poate fi vizualizata in fisierul 'times' - fisier text in care se
+regasesc output-urile rezultate din rularile celor 3 implementari pe partitia
+nehalem, cat si in fisierul 'Times_line_graph.png' - fisier .png in care se
+regaseste un grafic al performantelor rularii celor 3 implementari pe partitia
+nehalem (pe axa verticala, timpul de executie - in secunde, iar pe axa orizontala
+dimensiunea matricelor - N). 
+Din acest grafic reiese foarte clar faptul ca implemetarea folosind biblioteca 
+blas este net superioara din punct de vedere al performantei in comparatie cu o 
+implemetarile 'de mana'. Acestea fiind spuse insa, se observa si o imbunatatire 
+considerabila a performantei prin optimizarile efectuate asupra implementarii
+initiale, neoptimizate (la N = 1600 executia variantei neoptimizata dureaza 120s,
+in timp ce cea a variantei optimizate, 43s).
+
+-------------------------------------------------
