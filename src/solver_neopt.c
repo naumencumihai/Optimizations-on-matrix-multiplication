@@ -1,7 +1,9 @@
 /*
- * Tema 2 ASC
- * 2022 Spring
- */
+	Unoptimized implementation for
+	C = B x A x At + Bt x B,
+	where At stands for the transpose form of matrix A
+*/
+
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -14,11 +16,6 @@ int max(int a, int b) {
 	}
 }
 
-/*
-	unoptimized implementation for
-	C = B x A x At + Bt x B,
-	where At stands for the transpose form of matrix A
-*/
 double* my_solver(int N, double *A, double* B) {
 	int dim = N * N;
 

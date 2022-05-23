@@ -1,12 +1,8 @@
 /*
- * Tema 2 ASC
- * 2022 Spring
- */
-
- /*
- Naumencu Mihai
- 336 CA
- */
+	BLAS implementation for
+	C = B x A x At + Bt x B,
+	where At stands for the transpose form of matrix A
+*/
 
 #include "utils.h"
 #include <cblas.h>
@@ -14,11 +10,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*
-	BLAS implementation for
-	C = B x A x At + Bt x B,
-	where At stands for the transpose form of matrix A
-*/
 double* my_solver(int N, double *A, double *B) {
 	double *BA;
 	double *BAAt;

@@ -1,16 +1,13 @@
 /*
- * Tema 2 ASC
- * 2022 Spring
- */
+	Optimized implementation for
+	C = B x A x At + Bt x B,
+	where At stands for the transpose form of matrix A
+*/
+
 #include "utils.h"
 #include <stdlib.h>
 #include <stdio.h>
 
-/*
-	optimized implementation for
-	C = B x A x At + Bt x B,
-	where At stands for the transpose form of matrix A
-*/
 double* my_solver(int N, double *A, double* B) {
 	register int dim = N * N;
 	register int i, j, k;
